@@ -128,7 +128,14 @@ namespace CodeFirstNewDatabaseSample
     }
 }
 ```
-That is all the code we need to start storing and retrieving data. Obviously there is quite a bit going on behind the scenes and we’ll take a look at that in a moment but first let’s see it in action.
+
+Now we need to run a few commands to initialise our database according to our entities:
+
+* Open a command line window in the project folder
+* Run ```dotnet ef migrations add Initial``` to create our first migration, which we will discuss later
+* Run ```dotnet ef database update``` to initialise our database according to the migration
+
+That is all we need to start storing and retrieving data. Obviously there is quite a bit going on behind the scenes and we’ll take a look at that in a moment but first let’s see it in action.
 
 ## 4. Reading & Writing Data
 Implement the Main method in Program.cs as shown below. This code creates a new instance of our context and then uses it to insert a new Blog. Then it uses a LINQ query to retrieve all Blogs from the database ordered alphabetically by Title.
@@ -181,6 +188,7 @@ You can connect to this database using SQL Server Object Explorer in Visual Stud
 
 We can now inspect the tables that Code First created.
 
+DbContext worked out what classes to include in the model by looking at the DbSet properties that we defined. It then uses the default set of Code First conventions to determine table and column names, determine data types, find primary keys, etc. Later in this walkthrough we’ll look at how you can override these conventions.
 
 ## 5. Dealing with Model Changes
 
