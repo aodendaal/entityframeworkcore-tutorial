@@ -208,7 +208,8 @@ Now let’s make a change to our model, add a Url property to the Blog class:
 Now we need to add a migration for the change:
 
 * Open a command line window in the project folder
-* Run ```dotnet ef migrations add AddUrlToBlog``` This command checks for changes since your last migration and scaffolds a new migration with any changes that are found. We can give migrations a name; in this case we are calling the migration ‘AddUrlToBlog’. The scaffolded code is saying that we need to add a Url column, that can hold string data, to the dbo.Blogs table. If needed, we could edit the scaffolded code but that’s not required in this case.
+* Run ```dotnet ef migrations add AddUrlToBlog``` 
+    * This command checks for changes since your last migration and scaffolds a new migration with any changes that are found. We can give migrations a name; in this case we are calling the migration ‘AddUrlToBlog’. The scaffolded code is saying that we need to add a Url column, that can hold string data, to the dbo.Blogs table. If needed, we could edit the scaffolded code but that’s not required in this case.
 
 ```csharp
 namespace CodeFirstNewDatabaseSample.Migrations
@@ -234,7 +235,8 @@ namespace CodeFirstNewDatabaseSample.Migrations
 }
 ```
 
-* Run ```dotnet ef database update``` This command will apply any pending migrations to the database. Our Initial migration has already been applied so migrations will just apply our new AddUrlToBlog migration. Tip: You can use the –Verbose switch when calling database update to see the SQL that is being executed against the database
+* Run ```dotnet ef database update``` 
+    * This command will apply any pending migrations to the database. Our Initial migration has already been applied so migrations will just apply our new AddUrlToBlog migration. Tip: You can use the –Verbose switch when calling database update to see the SQL that is being executed against the database
 
 The new Url column is now added to the Blogs table in the database:
 
