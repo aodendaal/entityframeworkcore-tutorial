@@ -16,7 +16,7 @@ You will need to have the following installed to complete this walkthrough:
 * Select **OK**
 
 ## 2. Create the Model
-Let's define a very simple model using classes. We're just defining them in the Program.cs file but in a real world application you would split your classes out into separate files and potentially a separate project.
+Let's define a very simple model using classes. We're just defining them in the **Program.cs** file but in a real world application you would split your classes out into separate files and potentially a separate project.
 
 Below the Program class definition in Program.cs add the following two classes.
 
@@ -41,18 +41,17 @@ public class Post
 ```
 
 ## 3. Create a Context
-Now it’s time to define a derived context, which represents a session with the database, allowing us to query and save data. We define a context that derives from Microsoft.EntityFrameworkCore.DbContext and exposes a typed DbSet<TEntity> for each class in our model.
+Now it's time to define a derived context, which represents a session with the database, allowing us to query and save data. We define a context that derives from Microsoft.EntityFrameworkCore.DbContext and exposes a typed DbSet<TEntity> for each class in our model.
     
-We’re now starting to use types from the Entity Framework Core so we need to add the EntityFrameworkCore NuGet packages.
+We're now starting to use types from the Entity Framework Core so we need to add the EntityFrameworkCore NuGet packages.
 
-* **Tools -> NuGet Package Manager -> Package Manager Console...**
-
+* Open **PowerShell**
 * Run these commands:
-    * ```Install-Package Microsoft.EntityFrameworkCore.Design```
-    * ```Install-Package Microsoft.EntityFrameworkCore.SqlServer```
-    * ```Install-Package Microsoft.EntityFrameworkCore.Tools.DotNet```
+    * ```dotnet add package Microsoft.EntityFrameworkCore.SqlServer```
+    * ```dotnet add package Microsoft.EntityFrameworkCore.Design```
+    * ```dotnet add package Microsoft.EntityFrameworkCore.Tools.DotNet```
     
- * Finally add these lines to your CodeFirstNewDatabaseSample.csproj file:
+ * Finally add these lines to your **CodeFirstNewDatabaseSample.csproj** file:
 
 ```xml
 <ItemGroup>
@@ -62,13 +61,13 @@ We’re now starting to use types from the Entity Framework Core so we need to a
 </ItemGroup>
 ```
 
-* Add the following using statements to the top of your Project.cs:
+* Add the following _using_ statements to the top of **Project.cs**:
 ```csharp
 using Microsoft.EntityFrameworkCore;
 using Microsoft.System.Collections.Generic;
 ```
 
-* Now add the following DbContext under your Post class: 
+* Create the following **DbContext** under your Post class: 
 ```csharp
 public class BloggingContext : DbContext
 {
@@ -81,7 +80,7 @@ public class BloggingContext : DbContext
 }
 ```
 
-Here is a complete listing of what Program.cs should now contain.
+Here is a complete listing of what **Program.cs** should look like at this time.
 
 ```csharp
 using Microsoft.EntityFrameworkCore;
@@ -131,7 +130,7 @@ namespace CodeFirstNewDatabaseSample
 
 Now we need to run a few commands to initialise our database according to our entities:
 
-* Open a command line window in the project folder
+* Re-open **Powershell**
 * Run ```dotnet ef migrations add Initial``` to create our first migration, which we will discuss later
 * Run ```dotnet ef database update``` to initialise our database according to the migration
 
@@ -141,33 +140,30 @@ That is all we need to start storing and retrieving data. Obviously there is qui
 Implement the Main method in Program.cs as shown below. This code creates a new instance of our context and then uses it to insert a new Blog. Then it uses a LINQ query to retrieve all Blogs from the database ordered alphabetically by Title.
 
 ```csharp
-    internal class Program
+internal class Program
+{
+    private static void Main(string[] args)
     {
-        private static void Main(string[] args)
+        using (var db = new BloggingContext())
         {
-            using (var db = new BloggingContext())
+            // Create and save a new Blog 
+            Console.Write("Enter a name for a new Blog: ");
+            var name = Console.ReadLine();
+            
+            db.Blogs.Add(new Blog { Name = name });
+            db.SaveChanges();
+            // Display all Blogs from the database 
+            var blogsOrderedByName = db.Blogs.OrderBy(blog => blog.Name);
+            Console.WriteLine("All blogs in the database:");
+            foreach (var blog in blogsOrderedByName)
             {
-                // Create and save a new Blog 
-                Console.Write("Enter a name for a new Blog: ");
-                var name = Console.ReadLine();
-                
-                db.Blogs.Add(new Blog { Name = name });
-                db.SaveChanges();
-
-                // Display all Blogs from the database 
-                var blogsOrderedByName = db.Blogs.OrderBy(blog => blog.Name);
-
-                Console.WriteLine("All blogs in the database:");
-                foreach (var blog in blogsOrderedByName)
-                {
-                    Console.WriteLine(blog.Name);
-                }
-
-                Console.WriteLine("Press any key to exit...");
-                Console.ReadKey();
+                Console.WriteLine(blog.Name);
             }
+            Console.WriteLine("Press any key to exit...");
+            Console.ReadKey();
         }
     }
+}
 ```
 You can now run the application and test it out.
 
@@ -176,10 +172,10 @@ Enter a name for a new Blog: AppFactoryBlog
 All blogs in the database:
 AppFactoryBlog
 Press any key to exit...
-
 ```
+
 ## Where's My Data?
-According to the statement ``` optionsBuilder.UseSqlServer("Data Source=(localdb)\\MSSQLLocalDB; Initial Catalog=CodeFirstNewDatabaseSample;");``` a SQL LocalDB database with the name **"CodeFirstNewDatabaseSample"** has been created.
+According to the statement ```optionsBuilder.UseSqlServer("Data Source=(localdb)\\MSSQLLocalDB; Initial Catalog=CodeFirstNewDatabaseSample;");``` a SQL LocalDB database with the name **"CodeFirstNewDatabaseSample"** has been created.
 
 You can connect to this database using SQL Server Object Explorer in Visual Studio 2017.
 
@@ -196,14 +192,13 @@ Now it’s time to make some changes to our model, when we make these changes we
 Now let’s make a change to our model, add a Url property to the Blog class:
 
 ```csharp
-    public class Blog
-    {
-        public int BlogId { get; set; }
-        public string Name { get; set; }
-        public string Url { get; set; }
-
-        public List<Post> Posts { get; set; }
-    }
+public class Blog
+{
+    public int BlogId { get; set; }
+    public string Name { get; set; }
+    public string Url { get; set; }
+    public List<Post> Posts { get; set; }
+}
 ```
 Now we need to add a migration for the change:
 
@@ -235,10 +230,15 @@ namespace CodeFirstNewDatabaseSample.Migrations
 }
 ```
 
-* Run ```dotnet ef database update``` 
-    * This command will apply any pending migrations to the database. Our Initial migration has already been applied so migrations will just apply our new AddUrlToBlog migration. Tip: You can use the –Verbose switch when calling database update to see the SQL that is being executed against the database
+* Run 
 
-The new Url column is now added to the Blogs table in the database:
+```powershell
+dotnet ef database update
+``` 
+
+This command will apply any pending migrations to the database. Our Initial migration has already been applied so migrations will just apply our new AddUrlToBlog migration. Tip: You can use the –Verbose switch when calling database update to see the SQL that is being executed against the database
+
+The new ```Url``` column is now added to the ```Blogs``` table in the database:
 
 ## 6. Data Annotations
 
