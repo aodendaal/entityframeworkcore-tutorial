@@ -63,7 +63,7 @@ We’re now starting to use types from the Entity Framework Core so we need to a
 ```
 
 * Add the following using statements to the top of your Project.cs:
-```
+```csharp
 using Microsoft.EntityFrameworkCore;
 using Microsoft.System.Collections.Generic;
 ```
@@ -131,11 +131,56 @@ namespace CodeFirstNewDatabaseSample
 That is all the code we need to start storing and retrieving data. Obviously there is quite a bit going on behind the scenes and we’ll take a look at that in a moment but first let’s see it in action.
 
 ## 4. Reading & Writing Data
+Implement the Main method in Program.cs as shown below. This code creates a new instance of our context and then uses it to insert a new Blog. Then it uses a LINQ query to retrieve all Blogs from the database ordered alphabetically by Title.
 
+```csharp
+    internal class Program
+    {
+        private static void Main(string[] args)
+        {
+            using (var db = new BloggingContext())
+            {
+                // Create and save a new Blog 
+                Console.Write("Enter a name for a new Blog: ");
+                var name = Console.ReadLine();
+                
+                db.Blogs.Add(new Blog { Name = name });
+                db.SaveChanges();
+
+                // Display all Blogs from the database 
+                var blogsOrderedByName = db.Blogs.OrderBy(blog => blog.Name);
+
+                Console.WriteLine("All blogs in the database:");
+                foreach (var blog in blogsOrderedByName)
+                {
+                    Console.WriteLine(blog.Name);
+                }
+
+                Console.WriteLine("Press any key to exit...");
+                Console.ReadKey();
+            }
+        }
+    }
+```
+You can now run the application and test it out.
+
+```
+Enter a name for a new Blog: AppFactoryBlog
+All blogs in the database:
+AppFactoryBlog
+Press any key to exit...
+
+```
 ## Where's My Data?
-By convention DbContext has created a database for you.
-* Code First will try and use LocalDb (installed by default with Visual Studio 2017)
-* The database is named after the fully qualified name of the derived context, in our case that is **CodeFirstNewDatabaseSample.BloggingContext**
+According to the statement ``` optionsBuilder.UseSqlServer("Data Source=(localdb)\\MSSQLLocalDB; Initial Catalog=CodeFirstNewDatabaseSample;");``` a SQL LocalDB database with the name **"CodeFirstNewDatabaseSample"** has been created.
+
+You can connect to this database using SQL Server Object Explorer in Visual Studio 2017.
+
+* **View -> SQL Server Object Explorer...** (Ctrl+\, Ctrl+S)
+* Expand **SQL Server -> (localdb)\MSSQLLocalDB -> Databases -> CodeFirstNewDatabaseSample -> Tables**
+
+We can now inspect the tables that Code First created.
+
 
 ## 5. Dealing with Model Changes
 
