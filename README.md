@@ -298,6 +298,40 @@ The full list of annotations supported by EF is:
 * [DatabaseGeneratedAttribute](https://msdn.microsoft.com/library/system.componentmodel.dataannotations.schema.databasegeneratedattribute "DatabaseGeneratedAttribute")
 * [NotMappedAttribute](https://msdn.microsoft.com/library/system.componentmodel.dataannotations.schema.notmappedattribute "NotMappedAttribute")
 ## 7. Fluent API
+In the previous section we looked at using Data Annotations to supplement or override what was detected by convention. The other way to configure the model is via the Code First fluent API.
+
+Most model configuration can be done using simple data annotations. The fluent API is a more advanced way of specifying model configuration that covers everything that data annotations can do in addition to some more advanced configuration not possible with data annotations. Data annotations and the fluent API can be used together.
+
+To access the fluent API you override the OnModelCreating method in DbContext. Let’s say we wanted to rename the column that User.DisplayName is stored in to display_name.
+
+* Override the OnModelCreating method on BloggingContext with the following code
+
+```csharp
+public class BloggingContext : DbContext
+{
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        optionsBuilder.UseSqlServer("Data Source=(localdb)\\MSSQLLocalDB; Initial Catalog=CodeFirstNewDatabaseSample;");
+    }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<User>()
+            .Property(u => u.DisplayName)
+            .HasColumnName("display_name");
+    }
+
+    public DbSet<Blog> Blogs { get; set; }
+    public DbSet<Post> Posts { get; set; }
+    public DbSet<User> Users { get; set; }
+}
+```
+* Use the ```dotnet ef migrations add ChangeDisplayName``` command to scaffold a migration to apply these changes to the database
+* Run the ```dotnet ef database update``` command to apply the new migration to the database
+
+The DisplayName column is now renamed to display_name:
+
+![Display Name](http://via.placeholder.com/500x600)
 
 ## Summary
 In this walkthrough we looked at Code First development using a new database. We defined a model using classes then used that model to create a database and store and retrieve data. Once the database was created we used Code First Migrations to change the schema as our model evolved. We also saw how to configure a model using Data Annotations and the Fluent API.
