@@ -184,6 +184,8 @@ You can connect to this database using SQL Server Object Explorer in Visual Stud
 
 We can now inspect the tables that Code First created.
 
+![Tables](http://via.placeholder.com/500x600)
+
 DbContext worked out what classes to include in the model by looking at the DbSet properties that we defined. It then uses the default set of Code First conventions to determine table and column names, determine data types, find primary keys, etc. Later in this walkthrough we’ll look at how you can override these conventions.
 
 ## 5. Dealing with Model Changes
@@ -277,6 +279,8 @@ public class User
 * Run the ```dotnet ef database update``` command to apply the new migration to the database
 
 The new table is now added to the database:
+
+![Users Table](http://via.placeholder.com/500x600)
 
 The full list of annotations supported by EF is:
 
