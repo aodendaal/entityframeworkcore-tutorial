@@ -202,7 +202,7 @@ public class Blog
 ```
 Now we need to add a migration for the change:
 
-* Open a command line window in the project folder
+* Re-open **Powershell**
 * Run ```dotnet ef migrations add AddUrlToBlog``` 
     * This command checks for changes since your last migration and scaffolds a new migration with any changes that are found. We can give migrations a name; in this case we are calling the migration ‘AddUrlToBlog’. The scaffolded code is saying that we need to add a Url column, that can hold string data, to the dbo.Blogs table. If needed, we could edit the scaffolded code but that’s not required in this case.
 
@@ -241,7 +241,33 @@ This command will apply any pending migrations to the database. Our Initial migr
 The new ```Url``` column is now added to the ```Blogs``` table in the database:
 
 ## 6. Data Annotations
+So far we’ve just let EF discover the model using its default conventions, but there are going to be times when our classes don’t follow the conventions and we need to be able to perform further configuration. There are two options for this; we’ll look at Data Annotations in this section and then the fluent API in the next section.
 
+* Let’s add a User class to our model
+```csharp
+public class User
+{
+    public string UserName { get; set; }
+    public string DisplayName { get; set; }
+}
+```
+* We also need to add a set to our derived context
+```csharp
+public class BloggingContext : DbContext
+{
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        optionsBuilder.UseSqlServer("Data Source=(localdb)\\MSSQLLocalDB; Initial Catalog=CodeFirstNewDatabaseSample;");
+    }
+
+    public DbSet<Blog> Blogs { get; set; }
+    public DbSet<Post> Posts { get; set; }
+    public DbSet<User> Users { get; set; }
+}
+```
+* If we tried to add a migration we’d get an error saying “The entity type 'User' requires a primary key to be defined.” because EF has no way of knowing that UserName should be the primary key for User.
+* We’re going to use Data Annotations now so we need to add a using statement at the top of Program.cs
+``` ```
 ## 7. Fluent API
 
 ## Summary
