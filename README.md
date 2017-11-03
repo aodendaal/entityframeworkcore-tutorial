@@ -230,13 +230,8 @@ namespace CodeFirstNewDatabaseSample.Migrations
 }
 ```
 
-* Run 
-
-```powershell
-dotnet ef database update
-``` 
-
-This command will apply any pending migrations to the database. Our Initial migration has already been applied so migrations will just apply our new AddUrlToBlog migration. Tip: You can use the –Verbose switch when calling database update to see the SQL that is being executed against the database
+* Run ```dotnet ef database update```
+    * This command will apply any pending migrations to the database. Our Initial migration has already been applied so migrations will just apply our new AddUrlToBlog migration. Tip: You can use the –Verbose switch when calling database update to see the SQL that is being executed against the database
 
 The new ```Url``` column is now added to the ```Blogs``` table in the database:
 
@@ -267,7 +262,37 @@ public class BloggingContext : DbContext
 ```
 * If we tried to add a migration we’d get an error saying “The entity type 'User' requires a primary key to be defined.” because EF has no way of knowing that UserName should be the primary key for User.
 * We’re going to use Data Annotations now so we need to add a using statement at the top of Program.cs
-``` ```
+
+```using System.ComponentModel.DataAnnotations;```
+* Now annotate the Username property to identify that it is the primary key
+```csharp
+public class User
+{
+    [Key]
+    public string UserName { get; set; }
+    public string DisplayName { get; set; }
+}
+```
+* Use the ```dotnet ef migrations add AddUser``` command to scaffold a migration to apply these changes to the database
+* Run the ```dotnet ef database update``` command to apply the new migration to the database
+
+The new table is now added to the database:
+
+The full list of annotations supported by EF is:
+
+* [KeyAttribute](https://msdn.microsoft.com/library/system.componentmodel.dataannotations.keyattribute "KeyAttribute")
+* [StringLengthAttribute](https://msdn.microsoft.com/library/system.componentmodel.dataannotations.stringlengthattribute "StringLengthAttribute")
+* [MaxLengthAttribute](https://msdn.microsoft.com/library/system.componentmodel.dataannotations.maxlengthattribute "MaxLengthAttribute")
+* [ConcurrencyCheckAttribute](https://msdn.microsoft.com/library/system.componentmodel.dataannotations.concurrencycheckattribute "ConcurrencyCheckAttribute")
+* [RequiredAttribute](https://msdn.microsoft.com/library/system.componentmodel.dataannotations.requiredattribute "RequiredAttribute")
+* [TimestampAttribute](https://msdn.microsoft.com/library/system.componentmodel.dataannotations.timestampattribute "TimestampAttribute")
+* [ComplexTypeAttribute](https://msdn.microsoft.com/library/system.componentmodel.dataannotations.schema.complextypeattribute "ComplexTypeAttribute")
+* [ColumnAttribute](https://msdn.microsoft.com/library/system.componentmodel.dataannotations.schema.columnattribute "ColumnAttribute")
+* [TableAttribute](https://msdn.microsoft.com/library/system.componentmodel.dataannotations.schema.tableattribute "TableAttribute")
+* [InversePropertyAttribute](https://msdn.microsoft.com/library/system.componentmodel.dataannotations.schema.inversepropertyattribute "InversePropertyAttribute")
+* [ForeignKeyAttribute](https://msdn.microsoft.com/library/system.componentmodel.dataannotations.schema.foreignkeyattribute "ForeignKeyAttribute")
+* [DatabaseGeneratedAttribute](https://msdn.microsoft.com/library/system.componentmodel.dataannotations.schema.databasegeneratedattribute "DatabaseGeneratedAttribute")
+* [NotMappedAttribute](https://msdn.microsoft.com/library/system.componentmodel.dataannotations.schema.notmappedattribute "NotMappedAttribute")
 ## 7. Fluent API
 
 ## Summary
