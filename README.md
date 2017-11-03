@@ -262,8 +262,8 @@ public class BloggingContext : DbContext
 ```
 * If we tried to add a migration we’d get an error saying “The entity type 'User' requires a primary key to be defined.” because EF has no way of knowing that UserName should be the primary key for User.
 * We’re going to use Data Annotations now so we need to add a using statement at the top of Program.cs
-
-```using System.ComponentModel.DataAnnotations;```
+   
+   ```using System.ComponentModel.DataAnnotations;```
 * Now annotate the Username property to identify that it is the primary key
 ```csharp
 public class User
