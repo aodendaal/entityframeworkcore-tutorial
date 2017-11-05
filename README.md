@@ -184,6 +184,8 @@ You can connect to this database using SQL Server Object Explorer in Visual Stud
 
 We can now inspect the tables that Code First created.
 
+![Tables](http://via.placeholder.com/500x600)
+
 DbContext worked out what classes to include in the model by looking at the DbSet properties that we defined. It then uses the default set of Code First conventions to determine table and column names, determine data types, find primary keys, etc. Later in this walkthrough we’ll look at how you can override these conventions.
 
 ## 5. Dealing with Model Changes
@@ -202,7 +204,7 @@ public class Blog
 ```
 Now we need to add a migration for the change:
 
-* Open a command line window in the project folder
+* Re-open **Powershell**
 * Run ```dotnet ef migrations add AddUrlToBlog``` 
     * This command checks for changes since your last migration and scaffolds a new migration with any changes that are found. We can give migrations a name; in this case we are calling the migration ‘AddUrlToBlog’. The scaffolded code is saying that we need to add a Url column, that can hold string data, to the dbo.Blogs table. If needed, we could edit the scaffolded code but that’s not required in this case.
 
@@ -230,19 +232,106 @@ namespace CodeFirstNewDatabaseSample.Migrations
 }
 ```
 
-* Run 
-
-```powershell
-dotnet ef database update
-``` 
-
-This command will apply any pending migrations to the database. Our Initial migration has already been applied so migrations will just apply our new AddUrlToBlog migration. Tip: You can use the –Verbose switch when calling database update to see the SQL that is being executed against the database
+* Run ```dotnet ef database update```
+    * This command will apply any pending migrations to the database. Our Initial migration has already been applied so migrations will just apply our new AddUrlToBlog migration. Tip: You can use the –Verbose switch when calling database update to see the SQL that is being executed against the database
 
 The new ```Url``` column is now added to the ```Blogs``` table in the database:
 
 ## 6. Data Annotations
+So far we’ve just let EF discover the model using its default conventions, but there are going to be times when our classes don’t follow the conventions and we need to be able to perform further configuration. There are two options for this; we’ll look at Data Annotations in this section and then the fluent API in the next section.
 
+* Let’s add a User class to our model
+```csharp
+public class User
+{
+    public string UserName { get; set; }
+    public string DisplayName { get; set; }
+}
+```
+* We also need to add a set to our derived context
+```csharp
+public class BloggingContext : DbContext
+{
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        optionsBuilder.UseSqlServer("Data Source=(localdb)\\MSSQLLocalDB; Initial Catalog=CodeFirstNewDatabaseSample;");
+    }
+
+    public DbSet<Blog> Blogs { get; set; }
+    public DbSet<Post> Posts { get; set; }
+    public DbSet<User> Users { get; set; }
+}
+```
+* If we tried to add a migration we’d get an error saying “The entity type 'User' requires a primary key to be defined.” because EF has no way of knowing that UserName should be the primary key for User.
+* We’re going to use Data Annotations now so we need to add a using statement at the top of Program.cs
+   
+   ```using System.ComponentModel.DataAnnotations;```
+* Now annotate the Username property to identify that it is the primary key
+```csharp
+public class User
+{
+    [Key]
+    public string UserName { get; set; }
+    public string DisplayName { get; set; }
+}
+```
+* Use the ```dotnet ef migrations add AddUser``` command to scaffold a migration to apply these changes to the database
+* Run the ```dotnet ef database update``` command to apply the new migration to the database
+
+The new table is now added to the database:
+
+![Users Table](http://via.placeholder.com/500x600)
+
+The full list of annotations supported by EF is:
+
+* [KeyAttribute](https://msdn.microsoft.com/library/system.componentmodel.dataannotations.keyattribute "KeyAttribute")
+* [StringLengthAttribute](https://msdn.microsoft.com/library/system.componentmodel.dataannotations.stringlengthattribute "StringLengthAttribute")
+* [MaxLengthAttribute](https://msdn.microsoft.com/library/system.componentmodel.dataannotations.maxlengthattribute "MaxLengthAttribute")
+* [ConcurrencyCheckAttribute](https://msdn.microsoft.com/library/system.componentmodel.dataannotations.concurrencycheckattribute "ConcurrencyCheckAttribute")
+* [RequiredAttribute](https://msdn.microsoft.com/library/system.componentmodel.dataannotations.requiredattribute "RequiredAttribute")
+* [TimestampAttribute](https://msdn.microsoft.com/library/system.componentmodel.dataannotations.timestampattribute "TimestampAttribute")
+* [ComplexTypeAttribute](https://msdn.microsoft.com/library/system.componentmodel.dataannotations.schema.complextypeattribute "ComplexTypeAttribute")
+* [ColumnAttribute](https://msdn.microsoft.com/library/system.componentmodel.dataannotations.schema.columnattribute "ColumnAttribute")
+* [TableAttribute](https://msdn.microsoft.com/library/system.componentmodel.dataannotations.schema.tableattribute "TableAttribute")
+* [InversePropertyAttribute](https://msdn.microsoft.com/library/system.componentmodel.dataannotations.schema.inversepropertyattribute "InversePropertyAttribute")
+* [ForeignKeyAttribute](https://msdn.microsoft.com/library/system.componentmodel.dataannotations.schema.foreignkeyattribute "ForeignKeyAttribute")
+* [DatabaseGeneratedAttribute](https://msdn.microsoft.com/library/system.componentmodel.dataannotations.schema.databasegeneratedattribute "DatabaseGeneratedAttribute")
+* [NotMappedAttribute](https://msdn.microsoft.com/library/system.componentmodel.dataannotations.schema.notmappedattribute "NotMappedAttribute")
 ## 7. Fluent API
+In the previous section we looked at using Data Annotations to supplement or override what was detected by convention. The other way to configure the model is via the Code First fluent API.
+
+Most model configuration can be done using simple data annotations. The fluent API is a more advanced way of specifying model configuration that covers everything that data annotations can do in addition to some more advanced configuration not possible with data annotations. Data annotations and the fluent API can be used together.
+
+To access the fluent API you override the OnModelCreating method in DbContext. Let’s say we wanted to rename the column that User.DisplayName is stored in to display_name.
+
+* Override the OnModelCreating method on BloggingContext with the following code
+
+```csharp
+public class BloggingContext : DbContext
+{
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        optionsBuilder.UseSqlServer("Data Source=(localdb)\\MSSQLLocalDB; Initial Catalog=CodeFirstNewDatabaseSample;");
+    }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<User>()
+            .Property(u => u.DisplayName)
+            .HasColumnName("display_name");
+    }
+
+    public DbSet<Blog> Blogs { get; set; }
+    public DbSet<Post> Posts { get; set; }
+    public DbSet<User> Users { get; set; }
+}
+```
+* Use the ```dotnet ef migrations add ChangeDisplayName``` command to scaffold a migration to apply these changes to the database
+* Run the ```dotnet ef database update``` command to apply the new migration to the database
+
+The DisplayName column is now renamed to display_name:
+
+![Display Name](http://via.placeholder.com/500x600)
 
 ## Summary
 In this walkthrough we looked at Code First development using a new database. We defined a model using classes then used that model to create a database and store and retrieve data. Once the database was created we used Code First Migrations to change the schema as our model evolved. We also saw how to configure a model using Data Annotations and the Fluent API.
