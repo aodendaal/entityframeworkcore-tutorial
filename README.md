@@ -51,14 +51,25 @@ We're now starting to use types from the Entity Framework Core so we need to add
     * ```dotnet add package Microsoft.EntityFrameworkCore.Design```
     * ```dotnet add package Microsoft.EntityFrameworkCore.Tools.DotNet```
     
- * Finally add these lines to your **CodeFirstNewDatabaseSample.csproj** file:
+* Finally add these lines to your **CodeFirstNewDatabaseSample.csproj** file:
 
 ```xml
 <ItemGroup>
     <DotNetCliToolReference Include="Microsoft.EntityFrameworkCore.Tools.DotNet">
-        <Version>1.0.0-*</Version>
+        <Version>2.0.0-*</Version>
     </DotNetCliToolReference>
 </ItemGroup>
+```
+
+* You can confirm the Entity Framework Core CLI has been included correctly by typing ```dotnet ef``` in Powershell and seeing the _unicorn_.
+
+```
+                     _/\__       
+               ---==/    \\      
+         ___  ___   |.    \|\    
+        | __|| __|  |  )   \\\   
+        | _| | _|   \_/ |  //|\\ 
+        |___||_|       /   \\\/\\
 ```
 
 * Add the following _using_ statements to the top of **Project.cs**:
