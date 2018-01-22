@@ -46,11 +46,10 @@ Now it's time to define a derived context, which represents a session with the d
 We're now starting to use types from the Entity Framework Core so we need to add the EntityFrameworkCore NuGet packages.
 
 * Open **PowerShell**
-* Run these commands:
+* Run these commands to include the Entity Framework Core package references:
     * ```dotnet add package Microsoft.EntityFrameworkCore.SqlServer```
     * ```dotnet add package Microsoft.EntityFrameworkCore.Design```
-    
-* Finally add these lines to your **CodeFirstNewDatabaseSample.csproj** file:
+* Insert these lines to your **CodeFirstNewDatabaseSample.csproj** file to include the CLI tool reference:
 
 ```xml
 <ItemGroup>
@@ -59,9 +58,9 @@ We're now starting to use types from the Entity Framework Core so we need to add
     </DotNetCliToolReference>
 </ItemGroup>
 ```
-    * _Note: Do NOT add Microsoft.EntityFrameworkCore.Tools.DotNet via **dotnet add package**. It must always be added as a CLI tool reference and not as a package reference._
 
-* You can confirm the Entity Framework Core CLI has been included correctly by typing ```dotnet ef``` in Powershell and seeing the _unicorn_.
+    * _Note: Do NOT add Microsoft.EntityFrameworkCore.Tools.DotNet via **dotnet add package**. It must always be added as a CLI tool reference and not as a package reference._
+    * You can confirm the Entity Framework Core CLI has been included correctly by typing ```dotnet ef``` in Powershell and seeing the _unicorn_.
 
 ```
                      _/\__       
