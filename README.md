@@ -50,7 +50,7 @@ We're now starting to use types from the Entity Framework Core so we need to add
     * ```dotnet add package Microsoft.EntityFrameworkCore.SqlServer```
     * ```dotnet add package Microsoft.EntityFrameworkCore.Design```
 * Insert these lines to your **CodeFirstNewDatabaseSample.csproj** file to include the CLI tool reference:
-    * Do not add Microsoft.EntityFrameworkCore.Tools.DotNet via **dotnet add package**. It must always be added as a CLI tool reference and not as a package reference.
+    * **Microsoft.EntityFrameworkCore.Tools.DotNet** must be added as a CLI tool reference (currently manually) and not as a package reference.
 ```xml
 <ItemGroup>
     <DotNetCliToolReference Include="Microsoft.EntityFrameworkCore.Tools.DotNet">
