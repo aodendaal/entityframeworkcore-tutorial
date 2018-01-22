@@ -148,7 +148,11 @@ That is all we need to start storing and retrieving data. Obviously there is qui
 ## 4. Reading & Writing Data
 Implement the Main method in Program.cs as shown below. This code creates a new instance of our context and then uses it to insert a new Blog. Then it uses a LINQ query to retrieve all Blogs from the database ordered alphabetically by Title.
 
+**.OrderBy()** is an extension method found in **System.Linq**. Do not forget to include it in a using statement at the top of the file.
+
 ```csharp
+using System.Linq;
+
 internal class Program
 {
     private static void Main(string[] args)
@@ -161,13 +165,16 @@ internal class Program
             
             db.Blogs.Add(new Blog { Name = name });
             db.SaveChanges();
+            
             // Display all Blogs from the database 
             var blogsOrderedByName = db.Blogs.OrderBy(blog => blog.Name);
             Console.WriteLine("All blogs in the database:");
+            
             foreach (var blog in blogsOrderedByName)
             {
                 Console.WriteLine(blog.Name);
             }
+            
             Console.WriteLine("Press any key to exit...");
             Console.ReadKey();
         }
