@@ -72,8 +72,8 @@ We're now starting to use types from the Entity Framework Core so we need to add
 
 * Add the following _using_ statements to the top of **Project.cs**:
 ```csharp
+using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.System.Collections.Generic;
 ```
 
 * Create the following **DbContext** under your Post class: 
@@ -92,9 +92,9 @@ public class BloggingContext : DbContext
 Here is a complete listing of what **Program.cs** should look like at this time.
 
 ```csharp
-using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
 
 namespace CodeFirstNewDatabaseSample
 {
@@ -127,7 +127,7 @@ namespace CodeFirstNewDatabaseSample
         public DbSet<Post> Posts { get; set; }
     }
 
-    internal class Program
+    class Program
     {
         private static void Main(string[] args)
         {
@@ -153,7 +153,7 @@ Implement the Main method in Program.cs as shown below. This code creates a new 
 ```csharp
 using System.Linq;
 
-internal class Program
+class Program
 {
     private static void Main(string[] args)
     {
@@ -200,7 +200,7 @@ You can connect to this database using SQL Server Object Explorer in Visual Stud
 
 We can now inspect the tables that Code First created.
 
-![Tables](http://via.placeholder.com/500x600)
+![Tables](https://i.imgur.com/EtJWUo7.png)
 
 DbContext worked out what classes to include in the model by looking at the DbSet properties that we defined. It then uses the default set of Code First conventions to determine table and column names, determine data types, find primary keys, etc. Later in this walkthrough we’ll look at how you can override these conventions.
 
@@ -234,7 +234,6 @@ namespace CodeFirstNewDatabaseSample.Migrations
             migrationBuilder.AddColumn<string>(
                 name: "Url",
                 table: "Blogs",
-                type: "nvarchar(max)",
                 nullable: true);
         }
 
@@ -252,6 +251,8 @@ namespace CodeFirstNewDatabaseSample.Migrations
     * This command will apply any pending migrations to the database. Our Initial migration has already been applied so migrations will just apply our new AddUrlToBlog migration. Tip: You can use the –Verbose switch when calling database update to see the SQL that is being executed against the database
 
 The new ```Url``` column is now added to the ```Blogs``` table in the database:
+
+![Tables](https://i.imgur.com/Y2fDHLR.png)
 
 ## 6. Data Annotations
 So far we’ve just let EF discover the model using its default conventions, but there are going to be times when our classes don’t follow the conventions and we need to be able to perform further configuration. There are two options for this; we’ll look at Data Annotations in this section and then the fluent API in the next section.
@@ -296,7 +297,7 @@ public class User
 
 The new table is now added to the database:
 
-![Users Table](http://via.placeholder.com/500x600)
+![Users Table](https://i.imgur.com/fI3Svxg.png)
 
 The full list of annotations supported by EF is:
 
@@ -347,7 +348,7 @@ public class BloggingContext : DbContext
 
 The DisplayName column is now renamed to display_name:
 
-![Display Name](http://via.placeholder.com/500x600)
+![Display Name](https://i.imgur.com/a0WJBXE.png)
 
 ## Summary
 In this walkthrough we looked at Code First development using a new database. We defined a model using classes then used that model to create a database and store and retrieve data. Once the database was created we used Code First Migrations to change the schema as our model evolved. We also saw how to configure a model using Data Annotations and the Fluent API.
