@@ -5,7 +5,7 @@ _Disclaimer: This is an re-implementation of the **Entity Framework Code First t
 ## Prerequisites
 You will need to have the following installed to complete this walkthrough:
 * Visual Studio 2017 with the .NET Core cross-platform development toolset 
-* .Net Core SDK
+* .Net Core SDK (2.0+)
 
 ## 1. Create the Application
 
@@ -46,19 +46,9 @@ Now it's time to define a derived context, which represents a session with the d
 We're now starting to use types from the Entity Framework Core so we need to add the EntityFrameworkCore NuGet packages.
 
 * Open **PowerShell**
-* Run these commands to include the Entity Framework Core package references:
-    * ```dotnet add package Microsoft.EntityFrameworkCore.SqlServer```
+* Run these commands to include the Entity Framework Core packages:
     * ```dotnet add package Microsoft.EntityFrameworkCore.Design```
-* Insert these lines to your **CodeFirstNewDatabaseSample.csproj** file to include the CLI tool reference:
-    * **Microsoft.EntityFrameworkCore.Tools.DotNet** must be added as a CLI tool reference (currently manually) and not as a package reference.
-```xml
-<ItemGroup>
-    <DotNetCliToolReference Include="Microsoft.EntityFrameworkCore.Tools.DotNet">
-        <Version>2.0.0-*</Version>
-    </DotNetCliToolReference>
-</ItemGroup>
-```
-
+    * ```dotnet add package Microsoft.EntityFrameworkCore.SqlServer```
 * Confirm the Entity Framework Core CLI has been included correctly by typing ```dotnet ef``` in Powershell and seeing the _unicorn_.
 
 ```
